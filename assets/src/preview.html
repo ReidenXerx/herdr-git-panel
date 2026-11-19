@@ -1,0 +1,178 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href="data:,"><link rel="stylesheet" href="base.css">
+<style>
+  body { width: 1600px; height: 1000px; overflow: hidden;
+    background: radial-gradient(1200px 700px at 70% 62%, #1b1f2b 0%, var(--bg) 62%); }
+  .wrap { padding: 58px 88px 0; }
+  h1 { font-size: 62px; line-height: 1.04; font-weight: 700; letter-spacing: -.02em; margin: 16px 0 16px; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .sub { font-size: 29px; line-height: 1.36; color: var(--muted); max-width: 1420px; }
+
+  /* the Herdr window (a mock in the app's own layout and colours, not a screenshot) */
+  :root { --w-bg: #111114; --pane: #18181b; --line: #2c2c32; --raised: #24242a; --hover: #2c2c33; --chrome: #1d1d21;
+    --t-fg: #ececf1; --t-muted: #a3a3ae; --t-dim: #6f6f7a; --red: #e5787f; --green: #98cf8b; --yellow: #e2c27f; --blue: #8fb4e8; --solid: #ececf1; }
+  .shot { position: absolute; left: 88px; right: 88px; bottom: 0; height: 720px; overflow: hidden; background: var(--w-bg);
+    border-radius: 18px 18px 0 0; border: 1px solid var(--border); border-bottom: 0;
+    box-shadow: 0 -10px 60px rgba(159,184,232,.12), 0 30px 80px rgba(0,0,0,.6); font-size: 14px; }
+  .shot::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(17,17,20,0), var(--bg)); }
+  i.ic { display: inline-flex; width: 16px; height: 16px; flex: none; }
+  i.ic svg { width: 100%; height: 100%; }
+  .tabs { height: 46px; display: flex; align-items: center; padding: 0 10px; border-bottom: 1px solid var(--line); }
+  .tab { display: flex; align-items: center; gap: 9px; height: 32px; padding: 0 12px; border-radius: 7px; background: var(--raised);
+    border: 1px solid var(--line); color: var(--t-fg); font-weight: 500; }
+  .tab .x { color: var(--t-dim); font-size: 13px; }
+  .tabs .sp { flex: 1; }
+  .tbtn { display: flex; align-items: center; gap: 7px; height: 32px; padding: 0 11px; border-radius: 7px; color: var(--t-muted); }
+  .tbtn.on { background: var(--raised); color: var(--t-fg); }
+  .panes { position: absolute; top: 56px; left: 10px; right: 10px; bottom: 0; display: grid; grid-template-columns: 1fr 600px; gap: 10px; }
+  .pane { background: var(--pane); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; position: relative; }
+  .pane.focus { border-color: #8a9ab8; }
+  .ph { height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-bottom: 1px solid var(--line); color: var(--t-fg); }
+  .ph span { color: var(--t-dim); }
+
+  /* terminal */
+  .term { padding: 20px 18px; font: 500 15px/1.75 JBM, ui-monospace, monospace; color: var(--t-fg); }
+  .pr { display: flex; gap: 10px; align-items: center; white-space: nowrap; }
+  .seg { padding: 0 8px; color: #111114; font-weight: 600; }
+  .seg.p { background: #8cc4a8; } .seg.b { background: #e8899a; }
+  .term .y { color: var(--yellow); } .term .g { color: var(--green); } .term .d { color: var(--t-dim); } .term .r { color: var(--red); }
+  .gap { height: 20px; }
+  .cur { display: inline-block; width: 10px; height: 20px; border: 1.5px solid var(--t-fg); vertical-align: -4px; }
+
+  /* the Git panel, at the panel's own sizes (main.js), scaled ×1.12 */
+  .gp { font-size: 14px; color: var(--t-fg); }
+  .gh { height: 45px; display: flex; align-items: center; gap: 3px; padding: 0 9px; border-bottom: 1px solid var(--line); }
+  .br { display: flex; align-items: center; gap: 7px; height: 31px; padding: 0 7px; border-radius: 7px; font-weight: 600; font-size: 14.5px; }
+  .br .ic { color: var(--t-muted); } .br .ic.s { width: 12px; height: 12px; color: var(--t-dim); }
+  .gh .sp { flex: 1; }
+  .ib { width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--t-muted); }
+  .cnt { height: 27px; display: flex; align-items: center; gap: 3px; padding: 0 6px; border-radius: 6px; color: var(--t-fg); font-size: 12.5px; font-weight: 500; }
+  .cbox { padding: 9px; display: flex; flex-direction: column; gap: 7px; border-bottom: 1px solid var(--line); }
+  .msg { padding: 7px 9px; border-radius: 9px; border: 1px solid var(--accent); background: var(--w-bg); font-size: 14px; line-height: 1.45; }
+  .msg .c { display: inline-block; width: 1.5px; height: 16px; background: var(--t-fg); vertical-align: -3px; margin-left: 1px; }
+  .crow { display: flex; align-items: center; gap: 4px; }
+  .amend { display: flex; align-items: center; gap: 6px; height: 27px; padding: 0 7px; color: var(--t-muted); font-size: 13px; }
+  .chk { width: 15px; height: 15px; border-radius: 3px; border: 1px solid #4a4a54; background: var(--w-bg); }
+  .crow .sp { flex: 1; }
+  .btn { height: 27px; padding: 0 11px; display: flex; align-items: center; border-radius: 7px; background: var(--solid); color: #111114; font-size: 13px; font-weight: 600; }
+  .sec { height: 29px; display: flex; align-items: center; gap: 7px; padding: 0 9px; }
+  .sec .ic { width: 13px; height: 13px; color: var(--t-dim); }
+  .sec b { font-size: 12.3px; font-weight: 600; color: var(--t-muted); letter-spacing: .02em; }
+  .pill { padding: 0 6px; border-radius: 9px; background: var(--raised); font-size: 11.2px; color: var(--t-muted); line-height: 17px; }
+  .sec .sp { flex: 1; }
+  .sec .ib { width: 22px; height: 22px; } .sec .ib .ic { width: 14px; height: 14px; color: var(--t-muted); }
+  .f { height: 29px; display: flex; align-items: center; gap: 7px; padding: 0 9px 0 26px; }
+  .f.sel { background: var(--hover); }
+  .f .ic { width: 15px; height: 15px; color: var(--t-dim); }
+  .f .n { flex: none; max-width: 250px; white-space: nowrap; font-size: 14px; }
+  .f .dir { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12.3px; color: var(--t-dim); }
+  .f .a { color: var(--green); font-size: 11.8px; } .f .d { color: var(--red); font-size: 11.8px; }
+  .f .code { width: 16px; text-align: center; font-size: 12.3px; font-weight: 600; }
+  .M { color: var(--yellow); } .U { color: var(--green); }
+  .cm { height: 29px; display: flex; align-items: center; gap: 9px; padding: 0 9px 0 26px; }
+  .cm .h { font: 500 12.3px JBM, monospace; color: var(--t-dim); }
+  .cm .s { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+  .cm .w { font-size: 12.3px; color: var(--t-dim); }
+  .dh { height: 38px; display: flex; align-items: center; gap: 5px; padding: 0 9px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--chrome); margin-top: 6px; }
+  .lbl { padding: 0 6px; border-radius: 4px; border: 1px solid var(--line); font-size: 11.2px; color: var(--t-muted); line-height: 17px; }
+  .dh .n { padding-left: 5px; font-size: 14px; } .dh .dir { flex: 1; font-size: 12.3px; color: var(--t-dim); padding-left: 6px; }
+  .pb { height: 27px; padding: 0 10px; display: flex; align-items: center; border-radius: 7px; background: var(--raised); font-size: 13px; }
+  .diff { font: 500 12.8px/22.4px JBM, ui-monospace, monospace; }
+  .dl { display: flex; gap: 7px; white-space: nowrap; }
+  .dl .o, .dl .nn { width: 36px; text-align: right; color: var(--t-dim); flex: none; }
+  .dl .k { width: 11px; flex: none; color: var(--t-dim); }
+  .dl.add { background: rgba(152,207,139,.11); } .dl.add .k { color: var(--green); }
+  .dl.del { background: rgba(229,120,127,.11); } .dl.del .k { color: var(--red); }
+  .dl .t { overflow: hidden; white-space: pre; }
+  .hunk { display: flex; align-items: center; gap: 5px; height: 22.4px; padding-left: 7px; background: var(--raised); color: var(--t-dim); white-space: nowrap; }
+  .hb { height: 18px; padding: 0 7px; display: flex; align-items: center; border-radius: 4px; border: 1px solid #4a4a54; background: var(--w-bg);
+    font: 500 11.2px Geist, sans-serif; color: var(--t-fg); }
+  .kw { color: #c69cf0; } .fn { color: var(--blue); } .num { color: #e9a87a; }
+</style></head><body>
+<div class="wrap">
+  <div class="kicker">Herdr mod · Git panel</div>
+  <h1>Git beside your agents, <em>one hunk at a time</em></h1>
+  <div class="sub">Replaces the Changes panel. Stage, discard and commit by file or by hunk; branches, pull and push.</div>
+</div>
+<div class="shot">
+  <div class="tabs">
+    <div class="tab"><span style="color:var(--t-muted)">&gt;_</span> shop <span class="x">✕</span></div>
+    <div class="sp"></div>
+    <div class="tbtn" style="font-size:18px">＋</div>
+    <div class="tbtn">Asks</div>
+    <div class="tbtn">Files</div>
+    <div class="tbtn on"><i class="ic" data-icon="git"></i> Changes</div>
+  </div>
+  <div class="panes">
+    <div class="pane">
+      <div class="ph"><span style="color:var(--t-muted)">&gt;_</span> zsh <span>~/code/acme-shop</span></div>
+      <div class="term">
+        <div class="pr"><span class="seg p">…/acme-shop</span><span class="seg b">main</span><span class="y">✎ 4</span></div>
+        <div><span class="r">❯</span> npm test -- cart</div>
+        <div class="d">&gt; acme-shop@0.9.0 test</div>
+        <div><span class="g">✓</span> cart/total.test.ts <span class="d">(7 tests)</span></div>
+        <div><span class="g">✓</span> money/round.test.ts <span class="d">(4 tests)</span></div>
+        <div><span class="g">Tests  11 passed</span> <span class="d">(11)</span></div>
+        <div class="gap"></div>
+        <div class="pr"><span class="seg p">…/acme-shop</span><span class="seg b">main</span><span class="y">✎ 4</span></div>
+        <div><span class="r">❯</span> <span class="cur"></span></div>
+      </div>
+    </div>
+    <div class="pane focus gp">
+      <div class="gh">
+        <div class="br"><i class="ic" data-icon="branch"></i>main<i class="ic s" data-icon="chevron-down"></i></div>
+        <div class="sp"></div>
+        <div class="ib"><i class="ic" data-icon="fetch"></i></div>
+        <div class="cnt"><i class="ic" data-icon="pull"></i>2</div>
+        <div class="cnt"><i class="ic" data-icon="push"></i>1</div>
+      </div>
+      <div class="cbox">
+        <div class="msg">Round line totals to cents before summing<span class="c"></span></div>
+        <div class="crow">
+          <div class="amend"><span class="chk"></span>Amend</div>
+          <div class="ib"><i class="ic" data-icon="sparkle"></i></div>
+          <div class="sp"></div>
+          <div class="ib"><i class="ic" data-icon="push"></i></div>
+          <div class="btn">Commit</div>
+        </div>
+      </div>
+      <div class="sec"><i class="ic" data-icon="chevron-down"></i><b>STAGED</b><span class="pill">1</span><span class="sp"></span><span class="ib"><i class="ic" data-icon="minus"></i></span></div>
+      <div class="f"><i class="ic" data-icon="file"></i><span class="n">round.ts</span><span class="dir">src/money</span><span class="a">+8</span><span class="d">−5</span><span class="code M">M</span></div>
+      <div class="sec"><i class="ic" data-icon="chevron-down"></i><b>CHANGES</b><span class="pill">3</span><span class="sp"></span><span class="ib"><i class="ic" data-icon="discard"></i></span><span class="ib"><i class="ic" data-icon="plus"></i></span></div>
+      <div class="f sel"><i class="ic" data-icon="file"></i><span class="n">total.ts</span><span class="dir">src/cart</span><span class="a">+4</span><span class="d">−2</span><span class="code M">M</span></div>
+      <div class="f"><i class="ic" data-icon="file"></i><span class="n">total.test.ts</span><span class="dir">src/cart</span><span class="a">+24</span><span class="code M">M</span></div>
+      <div class="f"><i class="ic" data-icon="file"></i><span class="n">pricing.md</span><span class="dir">docs</span><span class="a">+31</span><span class="code U">U</span></div>
+      <div class="sec"><i class="ic" data-icon="chevron-right"></i><b>STASHES</b><span class="pill">1</span></div>
+      <div class="sec"><i class="ic" data-icon="chevron-down"></i><b>COMMITS</b><span class="pill">40</span></div>
+      <div class="cm"><span class="h">7be0d44</span><span class="s">Cart: keep line items in the order they were added</span><span class="w">2h</span></div>
+      <div class="dh"><span class="lbl">CHANGES</span><span class="n">total.ts</span><span class="dir">src/cart</span><span class="ib"><i class="ic" data-icon="file" style="width:15px;height:15px"></i></span><span class="ib"><i class="ic" data-icon="close" style="width:13px;height:13px"></i></span></div>
+      <div class="diff">
+        <div class="hunk"><span class="hb">Stage</span><span class="hb">Discard</span><span style="padding-left:4px">@@ -14,8 +14,10 @@ export function total(items: Item[])</span></div>
+        <div class="dl"><span class="o">14</span><span class="nn">14</span><span class="k"></span><span class="t"><span class="kw">export function</span> <span class="fn">total</span>(items: Item[]): Money {</span></div>
+        <div class="dl"><span class="o">15</span><span class="nn">15</span><span class="k"></span><span class="t">  <span class="kw">let</span> sum = <span class="num">0</span>;</span></div>
+        <div class="dl"><span class="o">16</span><span class="nn">16</span><span class="k"></span><span class="t">  <span class="kw">for</span> (<span class="kw">const</span> item <span class="kw">of</span> items) {</span></div>
+        <div class="dl del"><span class="o">17</span><span class="nn"></span><span class="k">-</span><span class="t">    sum += item.price * item.qty;</span></div>
+        <div class="dl del"><span class="o">18</span><span class="nn"></span><span class="k">-</span><span class="t">  }</span></div>
+        <div class="dl add"><span class="o"></span><span class="nn">17</span><span class="k">+</span><span class="t">    <span class="kw">const</span> line = item.price * item.qty;</span></div>
+        <div class="dl add"><span class="o"></span><span class="nn">18</span><span class="k">+</span><span class="t">    sum += <span class="fn">roundToCents</span>(line);</span></div>
+        <div class="dl add"><span class="o"></span><span class="nn">19</span><span class="k">+</span><span class="t">  }</span></div>
+        <div class="dl add"><span class="o"></span><span class="nn">20</span><span class="k">+</span><span class="t">  <span class="kw">return</span> money(sum, items[<span class="num">0</span>]?.currency);</span></div>
+        <div class="dl"><span class="o">19</span><span class="nn">21</span><span class="k"></span><span class="t">}</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  // The panel's own icons (mods/git-panel/icons), inlined so they take the text colour as the app does.
+  const icons = [...document.querySelectorAll("i[data-icon]")];
+  const cache = {};
+  await Promise.all([...new Set(icons.map((i) => i.dataset.icon))].map(async (n) => {
+    const r = await fetch(`icons/${n}.svg`);
+    if (!r.ok) throw new Error(`icon ${n}: HTTP ${r.status}`);
+    cache[n] = await r.text();
+  }));
+  for (const i of icons) i.innerHTML = cache[i.dataset.icon];
+  await document.fonts.load('700 62px Geist'); await document.fonts.load('600 22px JBM'); await document.fonts.load('500 15px JBM');
+  await document.fonts.load('400 14px Geist'); await document.fonts.load('600 14px Geist');
+  window.__ready = true;
+</script></body></html>

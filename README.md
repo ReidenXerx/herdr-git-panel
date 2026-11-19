@@ -1,6 +1,14 @@
+<img src="assets/logo.svg" width="72" alt="Git panel logo: a branch" align="right">
+
 # Git panel for Herdr
 
 A Git panel for the [Herdr](https://herdr.dev) desktop app, replacing the built-in Changes panel. It follows the terminal you're focused on, like Changes does, and adds what you'd expect from an editor's source control view.
+
+![Git panel for Herdr: a terminal on the left, the Git panel on the right with staged and unstaged files, the commit box, and a diff whose hunk has Stage and Discard buttons.](preview.png)
+
+## What it does
+
+![Two keys to commit, one click per hunk: ⌘Enter commit, ⌘⇧Enter commit and push, Stage/Discard on every hunk, ✨ message, branch picker](assets/card-keys.png)
 
 | | |
 |---|---|

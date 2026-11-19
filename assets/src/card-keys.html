@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href="data:,"><link rel="stylesheet" href="base.css">
+<style>
+  body { width: 1600px; height: 1000px; overflow: hidden; }
+  .card { width: 1600px; height: 1000px; padding: 64px 84px; display: flex; flex-direction: column; background: var(--bg); }
+  h1 { font-size: 62px; font-weight: 700; letter-spacing: -.015em; margin: 12px 0 26px; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .rows { display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; }
+  .row { display: grid; grid-template-columns: 440px 1fr; align-items: center; gap: 24px;
+    padding: 14px 30px; border-radius: 16px; background: var(--popover); border: 1px solid var(--border); }
+  .hint { display: flex; align-items: center; gap: 16px; font-size: 34px; color: var(--muted); white-space: nowrap; }
+  .hint .key { font-size: 34px; }
+  .hint .key i { display: inline-flex; width: .8em; height: .8em; }
+  .hint .key i svg { width: 100%; height: 100%; }
+  .what { font-size: 32px; line-height: 1.3; color: var(--fg); }
+  .what span { color: var(--muted); }
+  .rank { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .tile { padding: 20px 28px; border-radius: 14px; border: 1px solid var(--border); }
+  .tile b { display: block; font-size: 33px; margin-bottom: 6px; }
+  .tile div { font-size: 29px; line-height: 1.32; color: var(--muted); }
+</style></head><body>
+<div class="card">
+  <div class="kicker">Git panel for Herdr</div>
+  <h1>Two keys to commit, <em>one click per hunk</em></h1>
+  <div class="rows">
+    <div class="row"><div class="hint"><span class="key">⌘Enter</span> commit</div>
+      <div class="what">Commits what's staged. <span>Nothing staged? Commit all.</span></div></div>
+    <div class="row"><div class="hint"><span class="key">⌘⇧Enter</span> and push</div>
+      <div class="what">Commit, then push. <span>No upstream yet? Publish.</span></div></div>
+    <div class="row"><div class="hint"><span class="key">Stage</span><span class="key">Discard</span> hunk</div>
+      <div class="what">On every hunk of a diff, <span>so a commit can take part of a file.</span></div></div>
+    <div class="row"><div class="hint"><span class="key"><i data-icon="sparkle"></i> message</span></div>
+      <div class="what">Claude writes it from the diff, <span>in your repo's style.</span></div></div>
+    <div class="row"><div class="hint"><span class="key"><i data-icon="branch"></i> main ▾</span> branch</div>
+      <div class="what">Switch branches, <span>or type a name to create one.</span></div></div>
+  </div>
+  <div class="rank">
+    <div class="tile"><b>Asks before it destroys</b><div>Discard, drop a stash, undo a commit, abort a merge: each asks first, inline.</div></div>
+    <div class="tile"><b>Never waits on a password</b><div>Fetch, pull and push fail and say why instead of hanging on a prompt.</div></div>
+  </div>
+</div>
+<script type="module">
+  for (const i of document.querySelectorAll("i[data-icon]")) {
+    const r = await fetch(`icons/${i.dataset.icon}.svg`);
+    if (!r.ok) throw new Error(`icon ${i.dataset.icon}: HTTP ${r.status}`);
+    i.innerHTML = await r.text();
+  }
+  await document.fonts.load('700 62px Geist'); await document.fonts.load('600 34px JBM');
+  window.__ready = true;
+</script></body></html>

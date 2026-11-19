@@ -1,0 +1,21 @@
+@font-face { font-family: Geist; src: url(fonts/geist-sans-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
+@font-face { font-family: Geist; src: url(fonts/geist-sans-latin-500-normal.woff2) format("woff2"); font-weight: 500; }
+@font-face { font-family: Geist; src: url(fonts/geist-sans-latin-600-normal.woff2) format("woff2"); font-weight: 600; }
+@font-face { font-family: Geist; src: url(fonts/geist-sans-latin-700-normal.woff2) format("woff2"); font-weight: 700; }
+@font-face { font-family: JBM; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2"); font-weight: 500; }
+@font-face { font-family: JBM; src: url(fonts/jetbrains-mono-latin-600-normal.woff2) format("woff2"); font-weight: 600; }
+:root {
+  --bg: #111114;          /* near-black app background */
+  --popover: #2b2b2f;     /* the popup */
+  --raised: #3a3a40;      /* key chips */
+  --border: #3d3d44;
+  --fg: #ececf1;
+  --muted: #b4b4bf;
+  --dim: #8a8a96;
+  --accent: #9fb8e8;      /* soft blue */
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: Geist, system-ui, sans-serif; }
+.kicker { font: 600 22px JBM, ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.key { display: inline-flex; align-items: center; gap: .35em; padding: .12em .5em; border-radius: .35em; background: var(--raised);
+  color: var(--muted); font: 600 1em JBM, ui-monospace, monospace; border: 1px solid #4a4a52; }
