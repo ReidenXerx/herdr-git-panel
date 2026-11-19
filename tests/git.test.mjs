@@ -9,7 +9,10 @@ import { parseStatus, parseNumstat, parseBranches, parseLog, parseStashes, parse
 
 function repo() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "git-panel-"));
-  const git = (...args) => execFileSync("git", args, { cwd: dir, encoding: "utf8", env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" } });
+  const env = { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" };
+  const git = (...args) => execFileSync("git", args, { cwd: dir, encoding: "utf8", env });
+  // A command expected to fail (a merge that conflicts): same identity, exit code ignored.
+  git.try = (...args) => spawnSync("git", args, { cwd: dir, env });
   git("init", "-q", "-b", "main");
   const write = (f, text) => { fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }); fs.writeFileSync(path.join(dir, f), text); };
   return { dir, git, write };
@@ -48,7 +51,7 @@ test("status: merge conflicts", () => {
   write("c.txt", "base\n"); git("add", "-A"); git("commit", "-q", "-m", "base");
   git("switch", "-q", "-c", "other"); write("c.txt", "theirs\n"); git("commit", "-qam", "theirs");
   git("switch", "-q", "main"); write("c.txt", "ours\n"); git("commit", "-qam", "ours");
-  spawnSync("git", ["merge", "other"], { cwd: git("rev-parse", "--show-toplevel").trim() });
+  git.try("merge", "other");
   const s = parseStatus(git("status", "--porcelain=v2", "-z"));
   assert.deepEqual(s.conflicts.map((f) => [f.path, f.how]), [["c.txt", "UU"]]);
 });
